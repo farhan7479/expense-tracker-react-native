@@ -1,10 +1,9 @@
-
 const Expense = require('../models/ExpenseModel.js');
 
-// Get all expenses
+// Get all expenses sorted by date in descending order
 exports.getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.find();
+    const expenses = await Expense.find().sort({ date: -1 }); // Sort by date in descending order
     res.json(expenses);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -39,7 +38,7 @@ exports.getExpensesByFilter = async (req, res) => {
 
     const expenses = await Expense.find({
       date: { $gte: startDate, $lte: endDate }
-    });
+    }).sort({ date: -1 }); // Sort by date in descending order
 
     res.json(expenses);
   } catch (error) {
@@ -47,6 +46,7 @@ exports.getExpensesByFilter = async (req, res) => {
   }
 };
 
+// Add an expense
 exports.addExpense = async (req, res) => {
   const expense = new Expense({
     title: req.body.title,
@@ -54,7 +54,6 @@ exports.addExpense = async (req, res) => {
     type: req.body.type,
     expenseId: req.body.expenseId,
     label: req.body.label
-    
   });
 
   try {
@@ -65,23 +64,24 @@ exports.addExpense = async (req, res) => {
   }
 };
 
+// Get an expense by ID
 exports.getExpenseById = async (req, res) => {
   const expenseId = req.params.id;
 
-try {
-  const expense = await Expense.findOne({ expenseId: expenseId });
-  if (!expense) {
-    return res.status(404).json({ message: 'Expense not found' });
+  try {
+    const expense = await Expense.findOne({ expenseId: expenseId });
+    if (!expense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+    res.json(expense);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  res.json(expense);
-} catch (error) {
-  res.status(500).json({ message: error.message });
-}
-
 };
 
+// Delete an expense by expenseId
 exports.deleteExpenseByExpenseId = async (req, res) => {
-  const  expenseId  = req.params.expenseId;
+  const expenseId = req.params.expenseId;
   try {
     const expense = await Expense.findOneAndDelete({ expenseId });
     if (!expense) {
@@ -93,9 +93,9 @@ exports.deleteExpenseByExpenseId = async (req, res) => {
   }
 };
 
+// Update an expense by expenseId
 exports.updateExpenseByExpenseId = async (req, res) => {
-  
-  const { title, amount, type, label , expenseId} = req.body;
+  const { title, amount, type, label, expenseId } = req.body;
 
   try {
     const updatedExpense = await Expense.findOneAndUpdate(
@@ -113,4 +113,3 @@ exports.updateExpenseByExpenseId = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
