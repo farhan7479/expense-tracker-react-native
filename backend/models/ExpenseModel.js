@@ -23,6 +23,10 @@ const expenseSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  label:{
+    type: String,
+    
+  }
 });
 
 const Expense = mongoose.model("Expense", expenseSchema);

@@ -15,8 +15,9 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:8081' }));
-
+app.use(cors({ 
+  origin: ['http://localhost:8081', 'http://localhost:19000', 'http://localhost:19001']
+}));
 const PORT = process.env.PORT || 5000;
 
 const expenseRoutes = require('./routes/ExpenseRoute.js');
